@@ -1,4 +1,5 @@
 ﻿import React from "react";
+import { SCENE_LAYOUT } from "../design/SceneLayout";
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 
 import {
@@ -92,8 +93,9 @@ export const UnifiedAppJourney: React.FC<UnifiedAppJourneyProps> = ({
   highlight = "في App واحد",
   steps: stepLabels = ["منتج", "طلب", "دفع", "متابعة", "إشعار"],
 }) => {
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
+  const frame = useCurrentFrame();
   const progress = interpolate(frame, [8, 75], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -137,9 +139,12 @@ export const UnifiedAppJourney: React.FC<UnifiedAppJourneyProps> = ({
           <div
             style={{
               position: "absolute",
-              top: 650,
-              left: 70,
-              right: 70,
+              top: SCENE_LAYOUT.visual.top,
+              bottom: 420,
+              left: SCENE_LAYOUT.safe.left,
+              right: SCENE_LAYOUT.safe.right,
+              display: "flex",
+              alignItems: "center",
             }}
           >
             <div
@@ -173,14 +178,14 @@ export const UnifiedAppJourney: React.FC<UnifiedAppJourneyProps> = ({
                 <Pop key={String(title)} delay={index * 9}>
                   <div
                     style={{
-                      width: 150,
+                      width: SCENE_LAYOUT.sizes.journeyItemWidth,
                       textAlign: "center",
                     }}
                   >
                     <div
                       style={{
-                        width: 80,
-                        height: 80,
+                        width: SCENE_LAYOUT.sizes.journeyIcon,
+                        height: SCENE_LAYOUT.sizes.journeyIcon,
                         margin: "0 auto",
                         display: "flex",
                         alignItems: "center",
@@ -202,7 +207,7 @@ export const UnifiedAppJourney: React.FC<UnifiedAppJourneyProps> = ({
                       style={{
                         marginTop: 17,
                         fontFamily: ARCHAI.fonts.arabic,
-                        fontSize: 20,
+                        fontSize: 22,
                         color:
                           index === 4
                             ? ARCHAI.colors.cyan
@@ -244,10 +249,11 @@ export const BusinessInsightsDashboard: React.FC<
   variant = "dashboard",
 }) => {
   void variant;
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
+  const frame = useCurrentFrame();
   const revenue = Math.floor(
-    interpolate(frame, [0, 70], [revenueStart, revenueEnd], {
+  interpolate(frame, [0, 70], [revenueStart, revenueEnd], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     }),
@@ -274,7 +280,10 @@ export const BusinessInsightsDashboard: React.FC<
           <Pop delay={10}>
             <div
               style={{
-                marginTop: 100,
+                position: "absolute",
+                top: SCENE_LAYOUT.visual.top,
+                left: SCENE_LAYOUT.safe.left,
+                right: SCENE_LAYOUT.safe.right,
                 padding: 30,
                 border: `1px solid ${ARCHAI.colors.border}`,
                 background: ARCHAI.colors.surface,
@@ -329,7 +338,7 @@ export const BusinessInsightsDashboard: React.FC<
               <div
                 style={{
                   marginTop: 20,
-                  height: 220,
+                  height: 300,
                   border: `1px solid ${ARCHAI.colors.border}`,
                   position: "relative",
                   overflow: "hidden",
@@ -393,12 +402,8 @@ export const CustomerRetentionLoop: React.FC<
   variant = "circular-loop",
 }) => {
   void variant;
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
-  const rotation = interpolate(frame, [0, 120], [0, 360], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
 
   const items = [
     [itemLabels[0] ?? "عميل", <ConnectionIcon size={30} />],
@@ -428,7 +433,8 @@ export const CustomerRetentionLoop: React.FC<
           <div
             style={{
               position: "absolute",
-              top: 620,
+              top: SCENE_LAYOUT.visual.top,
+              bottom: 300,
               left: 0,
               right: 0,
               display: "flex",
@@ -437,12 +443,12 @@ export const CustomerRetentionLoop: React.FC<
           >
             <div
               style={{
-                width: 500,
-                height: 500,
+                width: SCENE_LAYOUT.sizes.retentionCircle,
+                height: SCENE_LAYOUT.sizes.retentionCircle,
                 borderRadius: "50%",
                 border: "1px dashed rgba(25,211,243,.4)",
                 position: "relative",
-                transform: `rotate(${rotation}deg)`,
+                transform: "none",
               }}
             >
               {items.map(([title, icon], index) => {
@@ -459,8 +465,8 @@ export const CustomerRetentionLoop: React.FC<
                     style={{
                       position: "absolute",
                       ...positions[index],
-                      width: 105,
-                      height: 105,
+                      width: SCENE_LAYOUT.sizes.retentionNode,
+                      height: SCENE_LAYOUT.sizes.retentionNode,
                       borderRadius: "50%",
                       border: `1px solid ${
                         index === 3
@@ -498,14 +504,14 @@ export const CustomerRetentionLoop: React.FC<
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transform: `rotate(${-rotation}deg)`,
+                  transform: "none",
                 }}
               >
                 <div
                   dir="rtl"
                   style={{
-                    width: 210,
-                    height: 210,
+                    width: SCENE_LAYOUT.sizes.retentionCenter,
+                    height: SCENE_LAYOUT.sizes.retentionCenter,
                     borderRadius: "50%",
                     background: ARCHAI.colors.card,
                     border: "1px solid rgba(25,211,243,.3)",
@@ -552,8 +558,9 @@ export const CompetitionPressure: React.FC<
   variant = "rising-bars",
 }) => {
   void variant;
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
+  const frame = useCurrentFrame();
   const progress = interpolate(frame, [0, 65], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -580,24 +587,25 @@ export const CompetitionPressure: React.FC<
           <div
             style={{
               position: "absolute",
-              left: 100,
-              right: 100,
-              bottom: 280,
-              height: 500,
+              left: SCENE_LAYOUT.safe.left,
+              right: SCENE_LAYOUT.safe.right,
+              top: SCENE_LAYOUT.visual.top,
+              bottom: 300,
+              height: "auto",
               display: "flex",
               alignItems: "flex-end",
               justifyContent: "center",
-              gap: 24,
+              gap: 30,
             }}
           >
             {heights.map((height, index) => {
-              const h = height * progress;
+              const h = height * progress * (SCENE_LAYOUT.sizes.competitionHeight / 470);
 
               return (
                 <div
                   key={index}
                   style={{
-                    width: 125,
+                    width: SCENE_LAYOUT.sizes.competitionBarWidth,
                     height: h,
                     borderTop:
                       index === heights.length - 1 ? `3px solid ${ARCHAI.colors.cyan}`
@@ -648,10 +656,11 @@ export const MissedOpportunities: React.FC<
   variant = "counter",
 }) => {
   void variant;
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
+  const frame = useCurrentFrame();
   const lost = Math.floor(
-    interpolate(frame, [0, 75], [0, target], {
+  interpolate(frame, [0, 75], [0, target], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     }),
@@ -671,28 +680,19 @@ export const MissedOpportunities: React.FC<
           <FadeSlide>
             <ArabicTitle size={58}>{question}</ArabicTitle>
 
-            <div
-              dir="rtl"
-              style={{
-                marginTop: 18,
-                fontFamily: ARCHAI.fonts.arabic,
-                fontSize: 52,
-                fontWeight: 700,
-                color: ARCHAI.colors.cyan,
-              }}
-            >
-              قد إيه ممكن تخسر؟
-            </div>
+
           </FadeSlide>
 
           <Pop delay={12}>
             <div
               style={{
                 position: "absolute",
-                top: 620,
-                left: 170,
-                right: 170,
-                padding: "55px 30px",
+                top: SCENE_LAYOUT.visual.top,
+                left: SCENE_LAYOUT.safe.left,
+                right: SCENE_LAYOUT.safe.right,
+                maxWidth: SCENE_LAYOUT.sizes.missedCardWidth,
+                margin: "0 auto",
+                padding: "65px 40px",
                 border: "1px solid rgba(25,211,243,.2)",
                 background: ARCHAI.colors.card,
               }}
@@ -712,7 +712,7 @@ export const MissedOpportunities: React.FC<
                 style={{
                   marginTop: 22,
                   fontFamily: ARCHAI.fonts.latin,
-                  fontSize: 132,
+                  fontSize: 156,
                   lineHeight: 1,
                   fontWeight: 800,
                   color: ARCHAI.colors.cyan,
@@ -758,8 +758,9 @@ export const DigitalTransformation: React.FC<
   variant = "before-after",
 }) => {
   void variant;
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
+  const frame = useCurrentFrame();
   const progress = interpolate(frame, [8, 70], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -790,9 +791,10 @@ export const DigitalTransformation: React.FC<
           <div
             style={{
               position: "absolute",
-              top: 650,
-              left: 70,
-              right: 70,
+              top: SCENE_LAYOUT.visual.top,
+              bottom: 420,
+              left: SCENE_LAYOUT.safe.left,
+              right: SCENE_LAYOUT.safe.right,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -801,8 +803,8 @@ export const DigitalTransformation: React.FC<
           >
             <div
               style={{
-                width: 310,
-                height: 310,
+                width: SCENE_LAYOUT.sizes.transformationBox,
+                height: SCENE_LAYOUT.sizes.transformationBox,
                 border: "1px solid rgba(255,255,255,.1)",
                 background: ARCHAI.colors.card,
                 display: "flex",
@@ -834,8 +836,8 @@ export const DigitalTransformation: React.FC<
 
             <div
               style={{
-                width: 310,
-                height: 310,
+                width: SCENE_LAYOUT.sizes.transformationBox,
+                height: SCENE_LAYOUT.sizes.transformationBox,
                 border: "1px solid rgba(25,211,243,.4)",
                 background: "rgba(25,211,243,.08)",
                 display: "flex",
@@ -918,7 +920,7 @@ export const CustomAppSolution: React.FC<
         <div
           style={{
             position: "absolute",
-            top: 575,
+            top: SCENE_LAYOUT.visual.top,
             left: 0,
             right: 0,
             display: "flex",
@@ -926,7 +928,7 @@ export const CustomAppSolution: React.FC<
           }}
         >
           <Pop delay={10}>
-            <PhoneFrame width={420}>
+            <PhoneFrame width={SCENE_LAYOUT.sizes.phoneWidth}>
               <div
                 style={{
                   height: "100%",
@@ -1021,8 +1023,9 @@ export const FinalBrandCTA: React.FC<
   variant = "centered",
 }) => {
   void variant;
-  const frame = useCurrentFrame();
+  // frame intentionally unused
 
+  const frame = useCurrentFrame();
   const scale = interpolate(frame, [0, 35], [0.88, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -1106,6 +1109,21 @@ export const FinalBrandCTA: React.FC<
     </AbsoluteFill>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
