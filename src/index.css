@@ -1,1 +1,22 @@
-@import "tailwindcss";
+﻿:root {
+  --archai-bg: #0b1015;
+  --archai-surface: #10171e;
+  --archai-card: #17212a;
+  --archai-elevated: #202c35;
+
+  --archai-cyan: #19d3f3;
+  --archai-cyan-dark: #0b9fc0;
+
+  --archai-white: #f5f8fa;
+  --archai-text: #dce5ea;
+  --archai-silver: #8c9aa5;
+  --archai-muted: #56636d;
+
+  --archai-copper: #b88752;
+
+  --archai-border: rgba(255, 255, 255, 0.08);
+  --archai-border-cyan: rgba(25, 211, 243, 0.35);
+
+  --font-latin: "Manrope", sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", sans-serif;
+}

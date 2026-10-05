@@ -1,7 +1,75 @@
-node_modules
-dist
-.DS_Store
-.env
+# node_modules
+# dist
+# .DS_Store
+# .env
 
-# Ignore the output video from Git but not videos you import into src/.
-out
+# # Ignore the output video from Git but not videos you import into src/.
+# out
+
+# .env
+# videos/*/data/*.json
+# # Ignore rendered video outputs and heavy media
+# videos/**/output/
+# *.mp4
+# *.mov
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+
+# Build / generated output
+dist/
+out/
+output/
+.test-out/
+
+# Video outputs
+*.mp4
+*.mov
+*.webm
+*.avi
+*.mkv
+
+# Audio outputs / temporary media
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+
+# Archives
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+
+# Native binaries / libraries
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+
+# Whisper.cpp local runtime/models
+whisper.cpp/
+
+# Generated / temporary project files
+videos/**/output/
+videos/**/data/*.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,63 @@
+{
+  "fps": 30,
+  "durationInSeconds": 8,
+  "audio": null,
+  "scenes": [
+    {
+      "id": "scene-01",
+      "start": 0,
+      "end": 4,
+      "narration": "Your business is generating data every day.",
+      "intent": "hook",
+      "visual": {
+        "concept": "system",
+        "primitives": [
+          "node",
+          "path",
+          "data-packet"
+        ],
+        "motion": [
+          "reveal",
+          "connect",
+          "flow"
+        ],
+        "layout": {
+          "zone": "hero",
+          "scale": "hero",
+          "anchor": "center",
+          "alignment": "center",
+          "spacing": "normal"
+        },
+        "density": "minimal"
+      }
+    },
+    {
+      "id": "scene-02",
+      "start": 4,
+      "end": 8,
+      "narration": "But without the right system, opportunities get lost.",
+      "intent": "problem",
+      "visual": {
+        "concept": "problem",
+        "primitives": [
+          "comparison",
+          "node",
+          "path"
+        ],
+        "motion": [
+          "compare",
+          "emphasize",
+          "resolve"
+        ],
+        "layout": {
+          "zone": "focus",
+          "scale": "large",
+          "anchor": "center",
+          "alignment": "center",
+          "spacing": "wide"
+        },
+        "density": "balanced"
+      }
+    }
+  ]
+}

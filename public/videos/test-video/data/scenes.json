@@ -1,0 +1,535 @@
+{
+  "version": 3,
+  "engine": "scene-analyzer",
+  "source": "videos/test-video/data/transcript.json",
+  "durationMs": 75000,
+  "durationSeconds": 75,
+  "language": "ar",
+  "sceneCount": 12,
+  "designPrinciples": [
+    "one dominant idea per scene",
+    "visuals must communicate narration meaning",
+    "avoid displaying full narration as text",
+    "prioritize business outcomes",
+    "avoid repeating visual concepts",
+    "use semantic visual metaphors",
+    "use short readable on-screen text",
+    "use controlled purposeful motion",
+    "follow brand system"
+  ],
+  "scenes": [
+    {
+      "id": "scene-01",
+      "startMs": 0,
+      "endMs": 5000,
+      "durationMs": 5000,
+      "purpose": "hook",
+      "narration": {
+        "text": "تفتكر أن الموبايل أبلكيشن رفاهية؟ ومش ضرور البزنسك؟",
+        "startMs": 0,
+        "endMs": 5000
+      },
+      "visual": {
+        "primary": "A premium smartphone hero appears immediately, presenting the central question about whether a mobile app is a luxury or a business necessity.",
+        "supporting": [
+          "Smartphone",
+          "Business app",
+          "Question typography",
+          "Attention focus"
+        ],
+        "metaphor": "The customer's phone becomes the gateway to the business.",
+        "component": "HeroPhoneQuestion",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "هل الـ App رفاهية؟",
+        "ولا ضرورة للبزنس؟"
+      ],
+      "animation": {
+        "component": "HeroPhoneQuestion",
+        "duration": "scene-controlled",
+        "entrance": "fade-scale",
+        "emphasis": "scale",
+        "motion": "hero-focus"
+      },
+      "transition": "fade-slide",
+      "emphasis": "high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-02",
+      "startMs": 5000,
+      "endMs": 10000,
+      "durationMs": 5000,
+      "purpose": "question",
+      "narration": {
+        "text": "طب خلينا اسألك سؤال، عميلك بيفتح موبايله كم مرة في اليوم؟",
+        "startMs": 5000,
+        "endMs": 10000
+      },
+      "visual": {
+        "primary": "A phone usage counter visualizes how frequently customers interact with their phones.",
+        "supporting": [
+          "Smartphone",
+          "Usage counter",
+          "Daily interaction"
+        ],
+        "metaphor": "The customer's phone is one of the most frequent points of contact.",
+        "component": "PhoneUsageCounter",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "كم مرة بتفتح موبايلك؟"
+      ],
+      "animation": {
+        "component": "PhoneUsageCounter",
+        "duration": "scene-controlled",
+        "entrance": "fade-slide",
+        "emphasis": "scale",
+        "motion": "attention-pulse"
+      },
+      "transition": "fade",
+      "emphasis": "medium-high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-03",
+      "startMs": 10000,
+      "endMs": 17000,
+      "durationMs": 7000,
+      "purpose": "problem",
+      "narration": {
+        "text": "بالضبط، كتير جداً، وعشان كده وجود البزنس بتاعك على موبايل العميل مش مجرد شكل حلو",
+        "startMs": 10000,
+        "endMs": 17000
+      },
+      "visual": {
+        "primary": "A decorative-looking mobile screen transforms into a functional business interface.",
+        "supporting": [
+          "Mobile interface",
+          "Product card",
+          "Action buttons",
+          "Business utility"
+        ],
+        "metaphor": "A business app creates utility, not just visual presence.",
+        "component": "AppearanceToUtility",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "مش مجرد شكل"
+      ],
+      "animation": {
+        "component": "AppearanceToUtility",
+        "duration": "scene-controlled",
+        "entrance": "directional",
+        "emphasis": "highlight",
+        "motion": "fragmented-flow"
+      },
+      "transition": "directional",
+      "emphasis": "medium-high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-04",
+      "startMs": 17000,
+      "endMs": 26000,
+      "durationMs": 9000,
+      "purpose": "problem",
+      "narration": {
+        "text": "ده معناه إنك بتكون أقرب له في كل وقت، بدل ما العميل يدور عليك، يفتح جوجل، يدخل على موقع أو يبعطلك رسالة",
+        "startMs": 17000,
+        "endMs": 26000
+      },
+      "visual": {
+        "primary": "A fragmented customer journey moves between search, website, and messages.",
+        "supporting": [
+          "Google search",
+          "Website",
+          "Message",
+          "Customer journey"
+        ],
+        "metaphor": "Too many disconnected steps create friction.",
+        "component": "FragmentedCustomerJourney",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "Google",
+        "Website",
+        "Message"
+      ],
+      "animation": {
+        "component": "FragmentedCustomerJourney",
+        "duration": "scene-controlled",
+        "entrance": "directional",
+        "emphasis": "highlight",
+        "motion": "fragmented-flow"
+      },
+      "transition": "directional",
+      "emphasis": "medium-high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-05",
+      "startMs": 26000,
+      "endMs": 36000,
+      "durationMs": 10000,
+      "purpose": "solution",
+      "narration": {
+        "text": "كل اللي محتاجه موجود قدامه في تطبيق واحد، يقدر يشوف منتجاتك، يطلب، يدفع، يتابع طلبه، ويجيله إشعارات بعروضك وتحديثاتك",
+        "startMs": 26000,
+        "endMs": 36000
+      },
+      "visual": {
+        "primary": "A customer completes the entire journey inside one mobile app.",
+        "supporting": [
+          "Products",
+          "Order",
+          "Payment",
+          "Tracking",
+          "Notifications"
+        ],
+        "metaphor": "One app connects the entire customer journey.",
+        "component": "UnifiedAppJourney",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "منتجات",
+        "طلب",
+        "دفع",
+        "متابعة",
+        "إشعارات"
+      ],
+      "animation": {
+        "component": "UnifiedAppJourney",
+        "duration": "scene-controlled",
+        "entrance": "transform",
+        "emphasis": "scale",
+        "motion": "connected-flow"
+      },
+      "transition": "transform",
+      "emphasis": "medium",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-06",
+      "startMs": 36000,
+      "endMs": 44000,
+      "durationMs": 8000,
+      "purpose": "benefit",
+      "narration": {
+        "text": "وفي نفس الوقت، أنت كصاحب بزنس بتقدر تفهم عملائك أكثر، تتابع طلباتهم، وتبني علاقة مستمرة معهم",
+        "startMs": 36000,
+        "endMs": 44000
+      },
+      "visual": {
+        "primary": "The business gains visibility into customers, orders, and relationships.",
+        "supporting": [
+          "Customer data",
+          "Orders",
+          "Insights",
+          "Relationship"
+        ],
+        "metaphor": "Better customer visibility enables better business decisions.",
+        "component": "BusinessInsightsDashboard",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "افهم عملائك",
+        "تابع طلباتهم",
+        "ابني علاقة مستمرة"
+      ],
+      "animation": {
+        "component": "BusinessInsightsDashboard",
+        "duration": "scene-controlled",
+        "entrance": "stagger",
+        "emphasis": "highlight",
+        "motion": "progressive-growth"
+      },
+      "transition": "connected",
+      "emphasis": "medium",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-07",
+      "startMs": 44000,
+      "endMs": 50000,
+      "durationMs": 6000,
+      "purpose": "benefit",
+      "narration": {
+        "text": "والأهم أنك مش بس بتبيع مرة، أنت بتخلق السبب يخلي العميل يرجعلك تاني",
+        "startMs": 44000,
+        "endMs": 50000
+      },
+      "visual": {
+        "primary": "A returning customer loop shows how a strong mobile experience encourages repeat engagement.",
+        "supporting": [
+          "Customer return",
+          "Notification",
+          "Repeat purchase",
+          "Retention"
+        ],
+        "metaphor": "A continuous relationship turns one purchase into repeat business.",
+        "component": "CustomerRetentionLoop",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "خلي العميل يرجعلك"
+      ],
+      "animation": {
+        "component": "CustomerRetentionLoop",
+        "duration": "scene-controlled",
+        "entrance": "stagger",
+        "emphasis": "highlight",
+        "motion": "progressive-growth"
+      },
+      "transition": "fade",
+      "emphasis": "medium",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-08",
+      "startMs": 50000,
+      "endMs": 56000,
+      "durationMs": 6000,
+      "purpose": "question",
+      "narration": {
+        "text": "في سوق المنافسة فيه بتزيد كل يوم، السؤال مش هل البزنس بتاعي محتاج App؟",
+        "startMs": 50000,
+        "endMs": 56000
+      },
+      "visual": {
+        "primary": "Increasing competition creates pressure for businesses to improve customer experience.",
+        "supporting": [
+          "Competitors",
+          "Market pressure",
+          "Business growth"
+        ],
+        "metaphor": "As competition increases, customer experience becomes a differentiator.",
+        "component": "CompetitionPressure",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "المنافسة بتزيد"
+      ],
+      "animation": {
+        "component": "CompetitionPressure",
+        "duration": "scene-controlled",
+        "entrance": "fade-slide",
+        "emphasis": "scale",
+        "motion": "attention-pulse"
+      },
+      "transition": "fade",
+      "emphasis": "medium-high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-09",
+      "startMs": 56000,
+      "endMs": 61000,
+      "durationMs": 5000,
+      "purpose": "question",
+      "narration": {
+        "text": "السؤال الحقيقي، قد إيه من العملة ممكن اخسرهم لو فضلت من غيره؟",
+        "startMs": 56000,
+        "endMs": 61000
+      },
+      "visual": {
+        "primary": "Missed opportunities accumulate when customers cannot access the business through a convenient digital experience.",
+        "supporting": [
+          "Missed customers",
+          "Lost opportunities",
+          "Business growth"
+        ],
+        "metaphor": "Every missing digital touchpoint can become a missed opportunity.",
+        "component": "MissedOpportunities",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "قد إيه ممكن تخسر؟"
+      ],
+      "animation": {
+        "component": "MissedOpportunities",
+        "duration": "scene-controlled",
+        "entrance": "fade-slide",
+        "emphasis": "scale",
+        "motion": "attention-pulse"
+      },
+      "transition": "fade",
+      "emphasis": "medium-high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-10",
+      "startMs": 61000,
+      "endMs": 65000,
+      "durationMs": 4000,
+      "purpose": "cta",
+      "narration": {
+        "text": "لو عندك بزنس وعايز تحويله التجربة رقمية تليق بعملائك",
+        "startMs": 61000,
+        "endMs": 65000
+      },
+      "visual": {
+        "primary": "A traditional business experience transforms into a polished digital mobile experience.",
+        "supporting": [
+          "Before/after transition",
+          "Mobile interface",
+          "Customer interaction",
+          "Digital experience"
+        ],
+        "metaphor": "Transforming the business experience into a digital experience customers expect.",
+        "component": "DigitalTransformation",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "حوّل تجربة عملائك",
+        "لتجربة رقمية"
+      ],
+      "animation": {
+        "component": "DigitalTransformation",
+        "duration": "scene-controlled",
+        "entrance": "scale",
+        "emphasis": "scale",
+        "motion": "brand-focus"
+      },
+      "transition": "scale-focus",
+      "emphasis": "high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-11",
+      "startMs": 65000,
+      "endMs": 71000,
+      "durationMs": 6000,
+      "purpose": "cta",
+      "narration": {
+        "text": "إحنا في Archive Solution بنبني mobile apps معمولة مخصوص عشان تخدم شغلك وتكبروا",
+        "startMs": 65000,
+        "endMs": 71000
+      },
+      "visual": {
+        "primary": "The brand becomes the solution provider. A custom mobile app is assembled around the business.",
+        "supporting": [
+          "Brand identity",
+          "Custom app interface",
+          "Business-specific modules",
+          "Growth indicator"
+        ],
+        "metaphor": "A custom-built app is designed around the business.",
+        "component": "CustomAppSolution",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "Mobile Apps",
+        "مصممة مخصوص لبزنسك"
+      ],
+      "animation": {
+        "component": "CustomAppSolution",
+        "duration": "scene-controlled",
+        "entrance": "scale",
+        "emphasis": "scale",
+        "motion": "brand-focus"
+      },
+      "transition": "scale-focus",
+      "emphasis": "high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    },
+    {
+      "id": "scene-12",
+      "startMs": 71000,
+      "endMs": 75000,
+      "durationMs": 4000,
+      "purpose": "cta",
+      "narration": {
+        "text": "خلي البزنس بتاعك أقرب العميلك بدغطة واحدة",
+        "startMs": 71000,
+        "endMs": 75000
+      },
+      "visual": {
+        "primary": "A premium final brand lockup combines the business brand with a polished mobile app visual and a clear call-to-action.",
+        "supporting": [
+          "Brand logo",
+          "Mobile app hero",
+          "CTA button"
+        ],
+        "metaphor": "Make the business closer to the customer with one tap.",
+        "component": "FinalBrandCTA",
+        "assetType": "generated-ui"
+      },
+      "onScreenText": [
+        "خلي البزنس أقرب لعملائك",
+        "بدغطة واحدة"
+      ],
+      "animation": {
+        "component": "FinalBrandCTA",
+        "duration": "scene-controlled",
+        "entrance": "scale",
+        "emphasis": "scale",
+        "motion": "brand-focus"
+      },
+      "transition": "scale-focus",
+      "emphasis": "high",
+      "assets": [],
+      "brandElements": [
+        "brand colors",
+        "brand typography",
+        "brand motion"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "primary": "#111111",
+  "secondary": "#666666",
+  "background": "#FFFFFF",
+  "surface": "#F5F5F5",
+  "text": "#111111",
+  "mutedText": "#666666",
+  "accent": "#2563EB"
+}

@@ -1,0 +1,13 @@
+{
+  "style": "smooth-modern",
+  "defaultEasing": "spring",
+  "entrance": "fade-slide",
+  "exit": "fade",
+  "emphasis": "scale",
+  "transition": "transform",
+  "avoid": [
+    "excessive-bounce",
+    "random-spin",
+    "unnecessary-motion"
+  ]
+}

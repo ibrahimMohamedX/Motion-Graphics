@@ -1,0 +1,132 @@
+{
+  "fps": 30,
+  "durationInSeconds": 40,
+  "audio": null,
+  "scenes": [
+    {
+      "id": "scene-01",
+      "start": 0,
+      "end": 5,
+      "narration": "لماذا تخسر عملاءك كل يوم؟",
+      "intent": "hook",
+      "visual": {
+        "archetype": "hero-question",
+        "props": {
+          "question": "لماذا تخسر عملاءك كل يوم؟",
+          "highlight": "عملاءك",
+          "subtitle": "",
+          "badge": "ARCHAI"
+        }
+      }
+    },
+    {
+      "id": "scene-02",
+      "start": 5,
+      "end": 10,
+      "narration": "العميل يمر برحلة مجزأة عبر نقاط تواصل متعددة",
+      "intent": "problem",
+      "visual": {
+        "archetype": "fragmented-customer-journey",
+        "props": {
+          "title": "رحلة العميل المجزأة",
+          "highlight": "نقاط احتكاك متعددة",
+          "steps": ["اكتشاف", "بحث", "مقارنة", "قرار", "شراء"]
+        }
+      }
+    },
+    {
+      "id": "scene-03",
+      "start": 10,
+      "end": 15,
+      "narration": "الحل هو تطبيق موحد يجمع كل رحلة العميل",
+      "intent": "solution",
+      "visual": {
+        "archetype": "unified-customer-journey",
+        "props": {
+          "title": "رحلة عميل موحدة",
+          "highlight": "في تطبيق واحد",
+          "steps": ["منتج", "طلب", "دفع", "متابعة", "إشعار"]
+        }
+      }
+    },
+    {
+      "id": "scene-04",
+      "start": 15,
+      "end": 20,
+      "narration": "تزيد مبيعاتك وتنمو أرباحك مع تحليلات ذكية",
+      "intent": "benefit",
+      "visual": {
+        "archetype": "business-insights-dashboard",
+        "props": {
+          "title": "تزيد مبيعاتك وتنمو أرباحك",
+          "metrics": [
+            { "label": "CUSTOMERS", "value": "1,284", "icon": "DataIcon" },
+            { "label": "ORDERS", "value": "348", "icon": "SystemIcon" },
+            { "label": "REVENUE", "value": "8,750 EGP", "icon": "CircuitIcon" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "scene-05",
+      "start": 20,
+      "end": 25,
+      "narration": "المنافسة بتزيد كل يوم والمنافسين بياخدوا عملائك",
+      "intent": "comparison",
+      "visual": {
+        "archetype": "competition-pressure",
+        "props": {
+          "title": "المنافسة بتزيد كل يوم",
+          "highlight": "المنافسين بياخدوا عملائك",
+          "competitors": ["COMPETITOR 1", "COMPETITOR 2", "COMPETITOR 3", "YOU"]
+        }
+      }
+    },
+    {
+      "id": "scene-06",
+      "start": 25,
+      "end": 30,
+      "narration": "بتخسر 12 فرصة كل يوم بسبب عدم وجود نظام",
+      "intent": "problem",
+      "visual": {
+        "archetype": "missed-opportunities",
+        "props": {
+          "question": "بتخسر 12 فرصة كل يوم بسبب عدم وجود نظام",
+          "target": "12",
+          "label": "فرص ممكن تضيع كل يوم"
+        }
+      }
+    },
+    {
+      "id": "scene-07",
+      "start": 30,
+      "end": 35,
+      "narration": "تحويل تجربتك من تقليدية إلى رقمية بالكامل",
+      "intent": "explanation",
+      "visual": {
+        "archetype": "digital-transformation",
+        "props": {
+          "title": "تحويل تجربتك من تقليدية",
+          "highlight": "تجربة رقمية",
+          "leftLabel": "تقليدية",
+          "rightLabel": "رقمية"
+        }
+      }
+    },
+    {
+      "id": "scene-08",
+      "start": 35,
+      "end": 40,
+      "narration": "تواصل معانا وابدأ رحلتك الرقمية اليوم",
+      "intent": "cta",
+      "visual": {
+        "archetype": "brand-cta",
+        "props": {
+          "title": "Archai Solutions",
+          "cta": "خلي البزنس أقرب لعملائك",
+          "brand": "AS"
+        }
+      }
+    }
+  ]
+}

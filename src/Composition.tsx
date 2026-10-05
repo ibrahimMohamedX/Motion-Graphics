@@ -1,25 +1,34 @@
-import { CalculateMetadataFunction, Composition } from "remotion";
+﻿import React from "react";
+import {
+  AbsoluteFill,
+  Audio,
+  Sequence,
+  staticFile,
+  useVideoConfig,
+} from "remotion";
 
-type Props = {};
+import { SceneComposer } from "./engine/SceneComposer";
+import type { ScenePlan } from "./engine/planning/ScenePlanner";
 
-const calculateMetadata: CalculateMetadataFunction<Props> = () => {
-  return {};
+export type VideoInputProps = {
+  videoName: string;
+  scenePlan: ScenePlan;
 };
 
-export const MyComposition = () => {
+export const MyComposition: React.FC<VideoInputProps> = ({ scenePlan }) => {
+  const { fps } = useVideoConfig();
+
   return (
-    <Composition
-      id="MyComp"
-      component={MyComponent}
-      durationInFrames={60}
-      fps={30}
-      width={1280}
-      height={720}
-      calculateMetadata={calculateMetadata}
-    />
-  );
-};
+    <AbsoluteFill>
+      <SceneComposer plan={scenePlan} fps={fps} />
 
-export const MyComponent: React.FC<Props> = () => {
-  return null;
+      {scenePlan.audio && (
+        <Sequence
+          durationInFrames={Math.ceil(scenePlan.durationInSeconds * fps)}
+        >
+          <Audio src={staticFile(scenePlan.audio)} />
+        </Sequence>
+      )}
+    </AbsoluteFill>
+  );
 };

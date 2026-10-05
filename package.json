@@ -6,11 +6,15 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
     "@remotion/cli": "4.0.532",
+    "@remotion/install-whisper-cpp": "4.0.532",
+    "@remotion/tailwind-v4": "4.0.532",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.532",
-    "@remotion/tailwind-v4": "4.0.532",
+    "sharp": "^0.35.5",
     "tailwindcss": "4.0.0"
   },
   "devDependencies": {
@@ -19,13 +23,16 @@
     "@types/web": "0.0.166",
     "eslint": "9.39.5",
     "prettier": "3.8.1",
+    "puppeteer": "^25.12.0",
+    "tsx": "^4.23.15",
     "typescript": "5.9.3"
   },
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "build:engine": "tsc"
   },
   "sideEffects": [
     "*.css"
