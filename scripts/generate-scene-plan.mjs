@@ -89,3 +89,4 @@ for (const scene of scenePlan.scenes) {
 console.log("");
 console.log(`Written to: ${outputPath}`);
 console.log("");
+

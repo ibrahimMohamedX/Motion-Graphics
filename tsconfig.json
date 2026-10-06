@@ -16,6 +16,8 @@
   },
   "exclude": [
     "remotion.config.ts",
-    "node_modules"
+    "node_modules",
+    "videos"
   ]
 }
+

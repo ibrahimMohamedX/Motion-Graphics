@@ -23,19 +23,9 @@ import {
   FinalBrandCTA,
 } from "../../visuals/BusinessScenes";
 
-export type SceneArchetype =
-  | "hero-question"
-  | "usage-counter"
-  | "appearance-to-utility"
-  | "fragmented-customer-journey"
-  | "unified-customer-journey"
-  | "business-insights-dashboard"
-  | "customer-retention-loop"
-  | "competition-pressure"
-  | "missed-opportunities"
-  | "digital-transformation"
-  | "custom-app-solution"
-  | "brand-cta";
+import type { SceneArchetype } from "./SceneArchetype.types";
+
+export type { SceneArchetype } from "./SceneArchetype.types";
 
 export type SceneArchetypeProps = Record<string, unknown>;
 
@@ -81,3 +71,6 @@ export const isSceneArchetype = (
 ): value is SceneArchetype =>
   typeof value === "string" &&
   value in SCENE_ARCHETYPE_REGISTRY;
+
+
+

@@ -1,12 +1,22 @@
 ﻿import type {
   MotionStrategy,
+  SceneBeat,
   VisualPlan,
 } from "../visuals/VisualGrammar";
 
+import { SCENE_ARCHETYPE_DEFINITION_MAP } from "../scenes/SceneArchetypeRegistry";
+import type { SceneArchetype } from "../scenes/SceneArchetype.types";
+
 import {
-  SCENE_ARCHETYPE_DEFINITION_MAP,
-  type SceneArchetype,
-} from "../scenes/SceneArchetype";
+  analyzeNarration,
+  type SemanticSceneIntent,
+  type VisualConcept,
+} from "./SemanticPlanner";
+
+import {
+  canReuseArchetype,
+  scoreArchetypeReuse,
+} from "./RepetitionGuard";
 
 export type TranscriptSegment = {
   start: number;
@@ -19,15 +29,19 @@ export type PlannedScene = {
   start: number;
   end: number;
   narration: string;
-  intent:
-    | "hook"
-    | "problem"
-    | "explanation"
-    | "solution"
-    | "benefit"
-    | "comparison"
-    | "cta";
-  visual: VisualPlan;
+
+  intent: SemanticSceneIntent;
+
+  visual: VisualPlan & {
+    visualConcept?: VisualConcept;
+  };
+
+  motion?: {
+    entrance: MotionStrategy;
+    body: MotionStrategy;
+    emphasis?: MotionStrategy;
+    exit?: MotionStrategy;
+  };
 };
 
 export type ScenePlan = {
@@ -43,244 +57,158 @@ type VisualMemory = {
   motionsUsed: MotionStrategy[];
 };
 
-const INTENT_TO_ARCHETYPE: Record<
-  PlannedScene["intent"],
-  SceneArchetype[]
+const ARCHETYPE_VARIANTS: Partial<
+  Record<SceneArchetype, string[]>
 > = {
-  hook: ["hero-question", "usage-counter"],
-
-  problem: [
-    "fragmented-customer-journey",
-    "appearance-to-utility",
-    "missed-opportunities",
+  "unified-customer-journey": [
+    "phone-flow",
+    "vertical-flow",
+    "radial-flow",
+    "system-map",
   ],
 
-  explanation: [
-    "appearance-to-utility",
-    "digital-transformation",
+  "fragmented-customer-journey": [
+    "scattered-touchpoints",
+    "branching-path",
+    "disconnected-cards",
   ],
 
-  solution: [
-    "unified-customer-journey",
-    "custom-app-solution",
-    "digital-transformation",
+  "business-insights-dashboard": [
+    "metric-stack",
+    "dashboard",
+    "signal-chart",
   ],
 
-  benefit: [
-    "business-insights-dashboard",
-    "customer-retention-loop",
-    "appearance-to-utility",
+  "customer-retention-loop": [
+    "circular-loop",
+    "repeat-path",
+    "customer-cycle",
   ],
 
-  comparison: [
-    "competition-pressure",
-    "digital-transformation",
+  "competition-pressure": [
+    "rising-bars",
+    "market-pressure",
+    "comparison-field",
   ],
 
-  cta: [
-    "brand-cta",
-    "custom-app-solution",
+  "custom-app-solution": [
+    "phone",
+    "product-showcase",
+    "system-preview",
+  ],
+
+  "digital-transformation": [
+    "before-after",
+    "transformation-flow",
+    "experience-shift",
+  ],
+
+  "missed-opportunities": [
+    "counter",
+    "warning",
+    "loss-field",
   ],
 };
 
-const INTENT_PATTERNS: Record<
-  PlannedScene["intent"],
-  RegExp[]
+const MOTION_PROFILES: Record<
+  SemanticSceneIntent,
+  {
+    entrance: MotionStrategy;
+    body: MotionStrategy;
+    emphasis: MotionStrategy;
+    exit: MotionStrategy;
+  }
 > = {
-  hook: [
-    /ليه|لماذا|ازاي|إزاي|هل|تخيل|عمرك|why|how|imagine|سؤال|question/i,
-    /مشكلة|مشكل|تبدأ|start|beginning|opening/i,
-  ],
+  hook: {
+    entrance: "reveal",
+    body: "emphasize",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
 
-  problem: [
-    /مشكلة|مشاكل|صعوبة|صعب|خسارة|بتخسر|يضيع|ضياع|problem|loss|difficult|pain|issue|error|failing|broken|عطل/i,
-    /منافسة|منافس|competition|competitor|pressure|ضغط|تهديد/i,
-    /مفقود|مضيع|missed|مفقودة|lost|فرصة|opportunity|تخسر|lose/i,
-  ],
+  "behavior-statistic": {
+    entrance: "reveal",
+    body: "build",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
 
-  solution: [
-    /حل|حلول|نظام|أنظمة|تطبيق|تطبيقات|منصة|تقنية|ذكاء|system|solution|platform|technology|app|application|software|منتج|product|أداة|tool|service|خدمة/i,
-    /بناء|بنيت|build|بنية|architecture|معمارية|تصميم|design|تطوير|develop/i,
-  ],
+  value: {
+    entrance: "reveal",
+    body: "transform",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
 
-  benefit: [
-    /ميزة|فوائد|زيادة|نمو|مبيعات|عملاء|ربح|efficiency|growth|sales|customers|revenue|profit|تحسين|improvement|أداء|performance|كفاءة|نتيجة|نتائج|roi|توفير|save/i,
-    /ولاء|احتفاظ|retention|تكرار|repeat|عودة|return|engagement|تفاعل/i,
-    /بيانات|تحليل|analytics|insight|insights|intelligence|metric|metrics|dashboard|business|أرقام|إحصائيات/i,
-  ],
+  problem: {
+    entrance: "build",
+    body: "connect",
+    emphasis: "flow",
+    exit: "resolve",
+  },
 
-  comparison: [
-    /قبل|بعد|بدل|مقابل|before|after|versus|vs|مقارنة|compare|comparison|فرق|difference|أفضل|better|احسن|تحسين/i,
-  ],
+  solution: {
+    entrance: "reveal",
+    body: "connect",
+    emphasis: "flow",
+    exit: "resolve",
+  },
 
-  cta: [
-    /تواصل|كلمني|ابدأ|اطلب|راسل|احجز|contact|start|message|begin|get|started|الآن|now|اليوم|today|اتصل|call|موقع|website|رابط|link/i,
-  ],
+  analytics: {
+    entrance: "build",
+    body: "flow",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
 
-  explanation: [
-    /كيف|ازاي|إزاي|يعمل|works|آلية|mechanism|عملية|process|خطوات|steps|مراحل|stages|شرح|explain|تفصيل|detail|طريقة|method|approach/i,
-  ],
+  retention: {
+    entrance: "reveal",
+    body: "connect",
+    emphasis: "flow",
+    exit: "resolve",
+  },
+
+  competition: {
+    entrance: "reveal",
+    body: "compare",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
+
+  risk: {
+    entrance: "reveal",
+    body: "build",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
+
+  transformation: {
+    entrance: "reveal",
+    body: "transform",
+    emphasis: "transform",
+    exit: "resolve",
+  },
+
+  cta: {
+    entrance: "reveal",
+    body: "emphasize",
+    emphasis: "emphasize",
+    exit: "resolve",
+  },
 };
 
-const inferIntent = (
-  text: string,
-): PlannedScene["intent"] => {
-  const value = text.toLowerCase();
-
-  for (const [intent, patterns] of Object.entries(
-    INTENT_PATTERNS,
-  )) {
-    for (const pattern of patterns) {
-      if (pattern.test(value)) {
-        return intent as PlannedScene["intent"];
-      }
-    }
-  }
-
-  return "explanation";
-};
-
-const selectArchetype = (
-  intent: PlannedScene["intent"],
-  narration: string,
-  memory: VisualMemory,
-): SceneArchetype | null => {
-  const candidates = INTENT_TO_ARCHETYPE[intent] ?? [];
-
-  if (candidates.length === 0) {
-    return null;
-  }
-
-  const narrationLower = narration.toLowerCase();
-
-  const scored = candidates.map((archetype, index) => {
-    const definition =
-      SCENE_ARCHETYPE_DEFINITION_MAP[archetype];
-
-    let score = 0;
-
-    if (definition) {
-      for (const keyword of definition.bestFor) {
-        if (
-          narrationLower.includes(
-            keyword.toLowerCase(),
-          )
-        ) {
-          score += 2;
-        }
-
-        if (
-          keyword.toLowerCase() === intent
-        ) {
-          score += 3;
-        }
-      }
-    }
-
-    // Strong penalty for immediate repetition.
-    const wasUsed =
-      memory.archetypesUsed.includes(archetype);
-
-    if (wasUsed) {
-      score -= 8;
-    }
-
-    // Additional penalty when this archetype was used
-    // recently in the same video.
-    const lastIndex =
-      memory.archetypesUsed.lastIndexOf(
-        archetype,
-      );
-
-    if (lastIndex >= 0) {
-      score -= Math.max(
-        1,
-        5 - (memory.archetypesUsed.length - lastIndex),
-      );
-    }
-
-    // Slight preference for earlier declared candidates
-    // when semantic scores are equal.
-    score -= index * 0.05;
-
-    return {
-      archetype,
-      score,
-    };
-  });
-
-  scored.sort(
-    (a, b) => b.score - a.score,
-  );
-
-  return scored[0]?.archetype ?? candidates[0];
-};
-
-const getVariant = (
+function getVariant(
   archetype: SceneArchetype,
   memory: VisualMemory,
-): string | undefined => {
-  const variants: Partial<
-    Record<SceneArchetype, string[]>
-  > = {
-    "unified-customer-journey": [
-      "phone-flow",
-      "vertical-flow",
-      "radial-flow",
-      "system-map",
-    ],
+): string | undefined {
+  const variants =
+    ARCHETYPE_VARIANTS[archetype];
 
-    "fragmented-customer-journey": [
-      "scattered-touchpoints",
-      "branching-path",
-      "disconnected-cards",
-    ],
-
-    "business-insights-dashboard": [
-      "metric-stack",
-      "dashboard",
-      "signal-chart",
-    ],
-
-    "customer-retention-loop": [
-      "circular-loop",
-      "repeat-path",
-      "customer-cycle",
-    ],
-
-    "competition-pressure": [
-      "rising-bars",
-      "market-pressure",
-      "comparison-field",
-    ],
-
-    "custom-app-solution": [
-      "phone",
-      "product-showcase",
-      "system-preview",
-    ],
-
-    "digital-transformation": [
-      "before-after",
-      "transformation-flow",
-      "experience-shift",
-    ],
-
-    "missed-opportunities": [
-      "counter",
-      "warning",
-      "loss-field",
-    ],
-  };
-
-  const available =
-    variants[archetype];
-
-  if (!available?.length) {
+  if (!variants?.length) {
     return undefined;
   }
 
-  const unused = available.filter(
+  const unused = variants.filter(
     (variant) =>
       !memory.variantsUsed.includes(
         `${archetype}:${variant}`,
@@ -290,81 +218,206 @@ const getVariant = (
   const pool =
     unused.length > 0
       ? unused
-      : available;
+      : variants;
 
   return pool[
     memory.variantsUsed.length %
       pool.length
   ];
-};
+}
 
-const getMotionProfile = (
-  intent: PlannedScene["intent"],
+function selectArchetype(
+  preferred: SceneArchetype[],
+  narration: string,
+  memory: VisualMemory,
   sceneIndex: number,
-): MotionStrategy[] => {
-  const profiles: Record<
-    PlannedScene["intent"],
-    MotionStrategy[][]
-  > = {
-    hook: [
-      ["reveal", "emphasize", "resolve"],
-      ["connect", "flow", "resolve"],
-    ],
+  totalScenes: number,
+): SceneArchetype | null {
+  if (!preferred.length) {
+    return null;
+  }
 
-    problem: [
-      ["build", "emphasize", "resolve"],
-      ["reveal", "compare", "resolve"],
-    ],
+  const narrationLower =
+    narration.toLowerCase();
 
-    explanation: [
-      ["build", "connect", "flow"],
-      ["reveal", "connect", "transform"],
-    ],
+  const scored = preferred.map(
+    (archetype, index) => {
+      const definition =
+        SCENE_ARCHETYPE_DEFINITION_MAP[
+          archetype
+        ];
 
-    solution: [
-      ["reveal", "connect", "resolve"],
-      ["transform", "flow", "resolve"],
-    ],
+      let score = 0;
 
-    benefit: [
-      ["build", "emphasize", "flow"],
-      ["reveal", "flow", "resolve"],
-    ],
+      if (definition) {
+        for (const keyword of definition.bestFor) {
+          if (
+            narrationLower.includes(
+              keyword.toLowerCase(),
+            )
+          ) {
+            score += 3;
+          }
+        }
+      }
 
-    comparison: [
-      ["compare", "emphasize", "resolve"],
-      ["reveal", "compare", "resolve"],
-    ],
+      /*
+       * Strong semantic preference.
+       *
+       * Earlier candidates are still preferred,
+       * but only after semantic/repetition scoring.
+       */
+      score -= index * 0.05;
 
-    cta: [
-      ["reveal", "emphasize", "resolve"],
-    ],
-  };
+      /*
+       * RepetitionGuard.
+       */
+      score -= scoreArchetypeReuse(
+        archetype,
+        {
+          previousArchetypes:
+            memory.archetypesUsed,
+          currentIndex: sceneIndex,
+          totalScenes,
+        },
+      );
 
-  const options =
-    profiles[intent];
+      /*
+       * If the archetype is inside the
+       * immediate repetition window,
+       * reject it completely when alternatives exist.
+       */
+      if (
+        !canReuseArchetype(
+          archetype,
+          {
+            previousArchetypes:
+              memory.archetypesUsed,
+            currentIndex: sceneIndex,
+            totalScenes,
+          },
+        )
+      ) {
+        score -= 1000;
+      }
 
-  return options[
-    sceneIndex % options.length
-  ];
-};
+      return {
+        archetype,
+        score,
+      };
+    },
+  );
 
-const generateArchetypeProps = (
+  scored.sort(
+    (a, b) => b.score - a.score,
+  );
+
+  return (
+    scored[0]?.archetype ??
+    preferred[0] ??
+    null
+  );
+}
+
+function getMotionProfile(
+  intent: SemanticSceneIntent,
+): {
+  entrance: MotionStrategy;
+  body: MotionStrategy;
+  emphasis: MotionStrategy;
+  exit: MotionStrategy;
+} {
+  return (
+    MOTION_PROFILES[intent] ??
+    MOTION_PROFILES.value
+  );
+}
+
+function createBeats(
+  duration: number,
+  motion: ReturnType<
+    typeof getMotionProfile
+  >,
+): SceneBeat[] {
+  const safeDuration =
+    Math.max(0.1, duration);
+
+  const entranceEnd =
+    Math.min(
+      0.7,
+      safeDuration * 0.18,
+    );
+
+  const exitStart =
+    Math.max(
+      entranceEnd,
+      safeDuration - 0.7,
+    );
+
+  const beats: SceneBeat[] = [];
+
+  beats.push({
+    id: "intro",
+    start: 0,
+    end: Math.max(
+      0.05,
+      entranceEnd,
+    ),
+    type: "intro",
+      motion:
+        motion.entrance === "build" ||
+          motion.entrance === "compare"
+            ? "reveal"
+            : motion.entrance,
+  });
+
+  if (
+    exitStart >
+    entranceEnd + 0.05
+  ) {
+    beats.push({
+      id: "statement",
+      start: entranceEnd,
+      end: exitStart,
+      type: "statement",
+      motion:
+        motion.body === "build" ||
+        motion.body === "compare"
+          ? "reveal"
+          : motion.body,
+    });
+  }
+
+  if (exitStart < safeDuration) {
+    beats.push({
+      id: "resolution",
+      start: exitStart,
+      end: safeDuration,
+      type: "resolution",
+      motion:
+        motion.exit === "build" ||
+        motion.exit === "compare"
+          ? "resolve"
+          : motion.exit,
+    });
+  }
+
+  return beats;
+}
+function generateProps(
   archetype: SceneArchetype,
   narration: string,
   variant?: string,
-): Record<string, unknown> => {
+): Record<string, unknown> {
   const text = narration.trim();
 
   const sentences = text
     .split(/[.!?؟]/)
-    .filter(
-      (sentence) =>
-        sentence.trim().length > 0,
-    );
+    .map((item) => item.trim())
+    .filter(Boolean);
 
   const firstSentence =
-    sentences[0]?.trim() ?? text;
+    sentences[0] ?? text;
 
   const words = text
     .split(/\s+/)
@@ -372,77 +425,95 @@ const generateArchetypeProps = (
       (word) => word.length > 2,
     );
 
-  const highlights = words.filter(
-    (word) =>
-      /^[A-Zأ-ي]/.test(word) ||
-      /\d/.test(word) ||
-      word.length > 8,
-  );
+  const highlightCandidates =
+    words.filter(
+      (word) =>
+        /^[A-Zأ-ي]/.test(word) ||
+        /\d/.test(word) ||
+        word.length > 8,
+    );
 
   const highlight =
-    highlights.slice(0, 3).join(" ") ||
+    highlightCandidates
+      .slice(0, 3)
+      .join(" ") ||
     firstSentence.slice(0, 40);
 
-  const question = text.includes("?")
-    ? text
-    : `${firstSentence}?`;
+  const question =
+    text.includes("?") ||
+    text.includes("؟")
+      ? text
+      : `${firstSentence}؟`;
 
   const subtitle =
-    sentences.slice(1, 3).join(" ") || "";
+    sentences
+      .slice(1, 3)
+      .join(" ") || "";
 
-  const stepCandidates = text
-    .split(/[,،;؛]+/)
-    .map((item) => item.trim())
-    .filter(
-      (item) =>
-        item.length > 3 &&
-        item.length < 50,
-    )
-    .slice(0, 5);
+  const steps =
+    text
+      .split(/[,،;؛]+/)
+      .map((item) => item.trim())
+      .filter(
+        (item) =>
+          item.length > 3 &&
+          item.length < 50,
+      )
+      .slice(0, 5);
 
   const metrics =
     text.match(
       /\d+[.,]?\d*\s*[%٪xX×]?/g,
     ) ?? [];
 
-  const common = variant
-    ? { variant }
-    : {};
+  const common =
+    variant
+      ? { variant }
+      : {};
 
   switch (archetype) {
     case "hero-question":
       return {
         ...common,
         question,
-        highlight: highlight.slice(0, 40),
-        subtitle: subtitle.slice(0, 100),
+        highlight:
+          highlight.slice(0, 40),
+        subtitle:
+          subtitle.slice(0, 100),
         badge: "ARCHAI",
       };
 
     case "usage-counter":
       return {
         ...common,
-        question: firstSentence.slice(0, 80),
-        target: metrics[0] || "1000",
+        question:
+          firstSentence.slice(0, 80),
+        target:
+          metrics[0] ?? "1000",
         label: "تفاعل يومي",
       };
 
     case "appearance-to-utility":
       return {
         ...common,
-        title: firstSentence.slice(0, 60),
-        highlight: highlight.slice(0, 40),
-        subtitle: subtitle.slice(0, 100),
+        title:
+          firstSentence.slice(0, 60),
+        highlight:
+          highlight.slice(0, 40),
+        subtitle:
+          subtitle.slice(0, 100),
       };
 
     case "fragmented-customer-journey":
       return {
         ...common,
-        title: "رحلة العميل المجزأة",
-        highlight: "نقاط احتكاك متعددة",
+        title:
+          "رحلة العميل المجزأة",
+        highlight:
+          "نقاط احتكاك متعددة",
         steps:
-          stepCandidates.length > 0
-            ? stepCandidates
+          steps.length > 0
+            ? steps
             : [
                 "اكتشاف",
                 "بحث",
@@ -455,11 +526,13 @@ const generateArchetypeProps = (
     case "unified-customer-journey":
       return {
         ...common,
-        title: "رحلة عميل موحدة",
-        highlight: "في تطبيق واحد",
+        title:
+          "رحلة عميل موحدة",
+        highlight:
+          "في تطبيق واحد",
         steps:
-          stepCandidates.length > 0
-            ? stepCandidates
+          steps.length > 0
+            ? steps
             : [
                 "منتج",
                 "طلب",
@@ -472,23 +545,24 @@ const generateArchetypeProps = (
     case "business-insights-dashboard":
       return {
         ...common,
-        title: firstSentence.slice(0, 60),
+        title:
+          firstSentence.slice(0, 60),
         metrics: [
           {
             label: "CUSTOMERS",
-            value: metrics[0] || "1,284",
-            icon: "DataIcon",
+            value:
+              metrics[0] ?? "1,284",
           },
           {
             label: "ORDERS",
-            value: metrics[1] || "348",
-            icon: "SystemIcon",
+            value:
+              metrics[1] ?? "348",
           },
           {
             label: "REVENUE",
             value:
-              metrics[2] || "8,750 EGP",
-            icon: "CircuitIcon",
+              metrics[2] ??
+              "8,750 EGP",
           },
         ],
       };
@@ -496,9 +570,11 @@ const generateArchetypeProps = (
     case "customer-retention-loop":
       return {
         ...common,
-        title: firstSentence.slice(0, 60),
-        highlight: "العميل يرجع تاني",
-        items: [
+        title:
+          firstSentence.slice(0, 60),
+        highlight:
+          "العميل يرجع تاني",
+        steps: [
           "عميل",
           "شراء",
           "تفاعل",
@@ -509,8 +585,10 @@ const generateArchetypeProps = (
     case "competition-pressure":
       return {
         ...common,
-        title: firstSentence.slice(0, 60),
-        highlight: "المنافسة بتزيد",
+        title:
+          firstSentence.slice(0, 60),
+        highlight:
+          "المنافسة بتزيد",
         competitors: [
           "COMPETITOR 1",
           "COMPETITOR 2",
@@ -522,16 +600,21 @@ const generateArchetypeProps = (
     case "missed-opportunities":
       return {
         ...common,
-        question: firstSentence.slice(0, 80),
-        target: metrics[0] || "12",
-        label: "فرص ممكن تضيع كل يوم",
+        question:
+          firstSentence.slice(0, 80),
+        target:
+          metrics[0] ?? "12",
+        label:
+          "فرص ممكن تضيع كل يوم",
       };
 
     case "digital-transformation":
       return {
         ...common,
-        title: firstSentence.slice(0, 60),
-        highlight: "تجربة رقمية",
+        title:
+          firstSentence.slice(0, 60),
+        highlight:
+          "تجربة رقمية",
         leftLabel: "تقليدية",
         rightLabel: "رقمية",
       };
@@ -539,179 +622,101 @@ const generateArchetypeProps = (
     case "custom-app-solution":
       return {
         ...common,
-        title: firstSentence.slice(0, 60),
-        highlight: "مصممة مخصوص لبزنسك",
-        appName: "Your Business",
+        title:
+          firstSentence.slice(0, 60),
+        highlight:
+          "مصممة مخصوص لبزنسك",
+        appName:
+          "Your Business",
       };
 
     case "brand-cta":
       return {
         ...common,
-        title: "Archai Solutions",
-        cta: "خلي البزنس أقرب لعملائك",
+        title:
+          "Archai Solutions",
+        cta:
+          "خلي البزنس أقرب لعملائك",
         brand: "AS",
       };
 
     default:
       return common;
   }
-};
+}
 
-const createPrimitiveVisualPlan = (
-  intent: PlannedScene["intent"],
+function createPrimitiveVisualPlan(
+  concept: VisualConcept,
+  intent: SemanticSceneIntent,
   sceneIndex: number,
-): VisualPlan => {
-  const layouts: Record<
-    string,
-    VisualPlan["layout"]
-  > = {
-    hook: {
-      zone: "hero",
-      scale: "hero",
-      anchor: "center",
-      alignment: "center",
-      spacing: "normal",
-    },
+): VisualPlan {
+  const layout: VisualPlan["layout"] = {
+    zone:
+      intent === "cta"
+        ? "cta"
+        : intent === "analytics"
+          ? "data"
+          : intent === "hook"
+            ? "hero"
+            : "focus",
 
-    problem: {
-      zone: "focus",
-      scale: "large",
-      anchor: "center",
-      alignment: "center",
-      spacing: "wide",
-    },
+    scale:
+      intent === "hook" ||
+      intent === "cta"
+        ? "hero"
+        : "large",
 
-    solution: {
-      zone: "focus",
-      scale: "large",
-      anchor: "center",
-      alignment: "center",
-      spacing: "normal",
-    },
-
-    benefit: {
-      zone: "data",
-      scale: "large",
-      anchor: "center",
-      alignment: "center",
-      spacing: "normal",
-    },
-
-    comparison: {
-      zone: "focus",
-      scale: "large",
-      anchor: "center",
-      alignment: "center",
-      spacing: "wide",
-    },
-
-    cta: {
-      zone: "cta",
-      scale: "large",
-      anchor: "center",
-      alignment: "center",
-      spacing: "normal",
-    },
-
-    explanation: {
-      zone: "focus",
-      scale: "medium",
-      anchor: "center",
-      alignment: "center",
-      spacing: "normal",
-    },
+    anchor: "center",
+    alignment: "center",
+    spacing: "normal",
   };
 
-  const concepts: Record<
-    string,
-    VisualPlan["concept"]
-  > = {
-    hook: "problem",
-    problem: "problem",
-    solution: "solution",
-    benefit: "growth",
-    comparison: "comparison",
-    cta: "outcome",
-    explanation: "system",
-  };
+  const primitives: VisualPlan["primitives"] =
+    concept === "data"
+      ? [
+          "dashboard",
+          "metric",
+          "data-packet",
+        ]
+      : concept === "comparison"
+        ? [
+            "comparison",
+            "path",
+          ]
+        : concept === "interface"
+          ? [
+              "interface",
+              "node",
+              "data-packet",
+            ]
+          : [
+              "node",
+              "path",
+              "data-packet",
+            ];
 
-  const primitivesMap: Record<
-    string,
-    VisualPlan["primitives"]
-  > = {
-    hook: [
-      "node",
-      "path",
-      "data-packet",
-    ],
-
-    problem: [
-      "comparison",
-      "node",
-      "path",
-    ],
-
-    solution: [
-      "interface",
-      "node",
-      "data-packet",
-    ],
-
-    benefit: [
-      "dashboard",
-      "metric",
-      "data-packet",
-    ],
-
-    comparison: [
-      "comparison",
-      "path",
-    ],
-
-    cta: [
-      "interface",
-      "metric",
-      "node",
-    ],
-
-    explanation: [
-      "node",
-      "path",
-      "data-packet",
-    ],
-  };
-
-  const profiles: MotionStrategy[][] = [
+  const motionSets: MotionStrategy[][] = [
     ["reveal", "connect", "flow"],
     ["build", "emphasize", "resolve"],
     ["transform", "flow", "resolve"],
   ];
 
   return {
-    concept:
-      concepts[intent] ?? "system",
-
-    primitives:
-      primitivesMap[intent] ??
-      ["node", "path", "data-packet"],
-
+    concept,
+    primitives,
     motion:
-      profiles[
-        sceneIndex % profiles.length
+      motionSets[
+        sceneIndex %
+          motionSets.length
       ],
-
-    layout:
-      layouts[intent] ?? {
-        zone: "focus",
-        scale: "medium",
-        anchor: "center",
-        alignment: "center",
-        spacing: "normal",
-      },
-
-    density: "balanced",
+    layout,
+    density:
+      intent === "hook" ||
+      intent === "cta"
+        ? "minimal"
+        : "balanced",
   };
-};
+}
 
 export const visualForSegment = (
   segment: TranscriptSegment,
@@ -721,61 +726,100 @@ export const visualForSegment = (
     motionsUsed: [],
   },
   sceneIndex = 0,
-): VisualPlan => {
-  const intent = inferIntent(
-    segment.text,
-  );
+  totalScenes = 1,
+): VisualPlan & {
+  visualConcept?: VisualConcept;
+} => {
+  const semantic =
+    analyzeNarration(
+      segment.text,
+    );
 
   const archetype =
     selectArchetype(
-      intent,
+      semantic.preferredArchetypes,
       segment.text,
       memory,
+      sceneIndex,
+      totalScenes,
+    );
+
+  if (!archetype) {
+    return createPrimitiveVisualPlan(
+      semantic.visualConcept,
+      semantic.intent,
+      sceneIndex,
+    );
+  }
+
+  const variant =
+    getVariant(
+      archetype,
+      memory,
+    );
+
+  const props =
+    generateProps(
+      archetype,
+      segment.text,
+      variant,
     );
 
   const motion =
     getMotionProfile(
-      intent,
-      sceneIndex,
+      semantic.intent,
     );
 
-  if (archetype) {
-    const variant =
-      getVariant(
-        archetype,
-        memory,
-      );
-
-    const props =
-      generateArchetypeProps(
-        archetype,
-        segment.text,
-        variant,
-      );
-
-    return {
-      archetype,
-      props,
-      concept: "system",
-      primitives: [],
-      motion,
-      layout: {
-        zone: "hero",
-        scale: "hero",
-        anchor: "center",
-        alignment: "center",
-        spacing: "normal",
-      },
-      density: "minimal",
-    };
-  }
-
   return {
-    ...createPrimitiveVisualPlan(
-      intent,
-      sceneIndex,
+    archetype,
+    props,
+
+    visualConcept:
+      semantic.visualConcept,
+
+    concept:
+      semantic.visualConcept,
+
+    primitives: [],
+
+    motion: [
+      motion.entrance,
+      motion.body,
+      motion.emphasis,
+      motion.exit,
+    ],
+
+    layout: {
+      zone:
+        semantic.intent === "cta"
+          ? "cta"
+          : "hero",
+
+      scale:
+        semantic.intent === "hook" ||
+        semantic.intent === "cta"
+          ? "hero"
+          : "large",
+
+      anchor: "center",
+      alignment: "center",
+      spacing: "normal",
+    },
+
+    density:
+      semantic.intent === "hook" ||
+      semantic.intent === "cta"
+        ? "minimal"
+        : "balanced",
+
+    beats: createBeats(
+      Math.max(
+        0.1,
+        segment.end -
+          segment.start,
+      ),
+      motion,
     ),
-    motion,
   };
 };
 
@@ -790,69 +834,102 @@ export const createScenePlan = (
     motionsUsed: [],
   };
 
-  const scenes = segments.map(
-    (
-      segment,
-      index,
-    ): PlannedScene => {
-      const visual =
-        visualForSegment(
-          segment,
-          memory,
-          index,
-        );
+  const totalScenes =
+    segments.length;
 
-      const archetype =
-        visual.archetype;
+  const scenes =
+    segments.map(
+      (
+        segment,
+        index,
+      ): PlannedScene => {
+        const semantic =
+          analyzeNarration(
+            segment.text,
+          );
 
-      if (archetype) {
-        memory.archetypesUsed.push(
-          archetype,
-        );
+        const visual =
+          visualForSegment(
+            segment,
+            memory,
+            index,
+            totalScenes,
+          );
 
-        const variant =
-          typeof visual.props?.variant ===
-          "string"
-            ? visual.props.variant
-            : undefined;
+        const archetype =
+          visual.archetype;
 
-        if (variant) {
-          memory.variantsUsed.push(
-            `${archetype}:${variant}`,
+        if (archetype) {
+          memory.archetypesUsed.push(
+            archetype,
+          );
+
+          const variant =
+            typeof visual.props
+              ?.variant === "string"
+              ? visual.props.variant
+              : undefined;
+
+          if (variant) {
+            memory.variantsUsed.push(
+              `${archetype}:${variant}`,
+            );
+          }
+        }
+
+        for (const motion of
+          visual.motion ?? []) {
+          memory.motionsUsed.push(
+            motion,
           );
         }
-      }
+        const motionProfile =
+          getMotionProfile(
+            semantic.intent,
+          );
 
-      for (const motion of visual.motion) {
-        memory.motionsUsed.push(
-          motion,
-        );
-      }
+        return {
+          id: `scene-${String(
+            index + 1,
+          ).padStart(2, "0")}`,
 
-      return {
-        id: `scene-${String(
-          index + 1,
-        ).padStart(2, "0")}`,
+          start:
+            segment.start,
 
-        start: segment.start,
-        end: segment.end,
+          end:
+            segment.end,
 
-        narration: segment.text,
+          narration:
+            segment.text,
 
-        intent: inferIntent(
-          segment.text,
-        ),
+          intent:
+            semantic.intent,
 
-        visual,
-      };
-    },
-  );
+          visual,
+
+          motion: {
+            entrance:
+              motionProfile.entrance,
+
+            body:
+              motionProfile.body,
+
+            emphasis:
+              motionProfile.emphasis,
+
+            exit:
+              motionProfile.exit,
+          },
+        };
+      },
+    );
 
   const durationInSeconds =
     scenes.length > 0
       ? Math.max(
           ...scenes.map(
-            (scene) => scene.end,
+            (scene) =>
+              scene.end,
           ),
         )
       : 0;
@@ -864,4 +941,11 @@ export const createScenePlan = (
     scenes,
   };
 };
+
+
+
+
+
+
+
 

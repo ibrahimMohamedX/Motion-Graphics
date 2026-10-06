@@ -67,7 +67,195 @@ export function analyzeNarration(
     .trim();
 
   // --------------------------------------------------
-  // 1. COMPETITION
+  // 1. CTA
+  // --------------------------------------------------
+
+  if (
+    containsAny(text, [
+      "تواصل معانا",
+      "تواصل معنا",
+      "كلمنا",
+      "كلمينا",
+      "ابدأ معانا",
+      "ابدأ معنا",
+      "احجز",
+      "اطلب الآن",
+      "ابدأ دلوقتي",
+      "خلي البزنس أقرب",
+      "خلي بزنسك أقرب",
+      "نقدر نساعدك",
+      "إحنا نقدر نساعدك",
+    ])
+  ) {
+    return {
+      intent: "cta",
+      visualConcept: "outcome",
+      preferredArchetypes: ["brand-cta"],
+    };
+  }
+
+  // --------------------------------------------------
+  // 2. HOOK / QUESTION
+  // --------------------------------------------------
+
+  if (
+    text.includes("?") ||
+    text.includes("؟") ||
+    containsAny(text, [
+      "تفتكر",
+      "هل",
+      "ليه",
+      "السؤال",
+      "واضحة بالنسبة",
+      "واضحة بنفس الشكل",
+      "واضح بالنسبة",
+    ])
+  ) {
+    return {
+      intent: "hook",
+      visualConcept: "problem",
+      preferredArchetypes: [
+        "hero-question",
+        "fragmented-customer-journey",
+      ],
+    };
+  }
+
+  // --------------------------------------------------
+  // 3. RISK / COST / DELAY
+  // --------------------------------------------------
+
+  if (
+    containsAny(text, [
+      "خسارة",
+      "اخسر",
+      "تكلفة أعلى",
+      "تكلفة",
+      "وقت أكثر",
+      "وقت أكتر",
+      "تأخير",
+      "تأخير في إطلاق",
+      "فرص",
+      "تضيع",
+      "غلط",
+      "مش هو اللي كنت متخيله",
+      "مش اللي كنت متخيله",
+    ])
+  ) {
+    return {
+      intent: "risk",
+      visualConcept: "outcome",
+      preferredArchetypes: [
+        "missed-opportunities",
+        "business-insights-dashboard",
+      ],
+    };
+  }
+
+  // --------------------------------------------------
+  // 4. PROBLEM / MISCOMMUNICATION / ITERATION
+  // --------------------------------------------------
+
+  if (
+    containsAny(text, [
+      "هنا تبدأ المشكلة",
+      "تبدأ المشكلة",
+      "المشكلة",
+      "مش فاهم",
+      "مش فاهم شغله",
+      "مش واضح",
+      "مش واضحة",
+      "ما تنقلتش",
+      "ما تنقلتش بشكل واضح",
+      "مش هو اللي",
+      "التعديلات",
+      "تعديل وراء تعديل",
+      "تعديل ورا تعديل",
+      "كنت أقصد",
+      "خلي دي تظهر",
+      "نغير الجزء",
+      "المطور يبدأ",
+      "الفريق التقني",
+      "الشخص اللي هيبرمجها",
+    ])
+  ) {
+    return {
+      intent: "problem",
+      visualConcept: "problem",
+      preferredArchetypes: [
+        "fragmented-customer-journey",
+        "competition-pressure",
+        "missed-opportunities",
+      ],
+    };
+  }
+
+  // --------------------------------------------------
+  // 5. TRANSFORMATION / IDEA -> REQUIREMENTS
+  // --------------------------------------------------
+
+  if (
+    containsAny(text, [
+      "تحويل",
+      "نحول",
+      "نحوّل",
+      "تحويل الفكرة",
+      "تحول",
+      "من مجرد تصور",
+      "لخطة واضحة",
+      "خطة واضحة",
+      "قابلة للتنفيذ",
+      "متطلبات واضحة",
+      "متطلبات",
+      "تجربة مستخدم محددة",
+      "فكرة حلوة",
+    ])
+  ) {
+    return {
+      intent: "transformation",
+      visualConcept: "transformation",
+      preferredArchetypes: [
+        "digital-transformation",
+        "custom-app-solution",
+      ],
+    };
+  }
+
+  // --------------------------------------------------
+  // 6. SOLUTION / PLANNING BEFORE CODE
+  // --------------------------------------------------
+
+  if (
+    containsAny(text, [
+      "قبل ما نكتب سطر كود",
+      "قبل البرمجة",
+      "قبل ما تبدأ البرمجة",
+      "هنبني إيه",
+      "وليه",
+      "وازاي",
+      "وزاي",
+      "فين بالضبط",
+      "نحدد",
+      "محتاج حد",
+      "محتاج",
+      "قابلة للتنفيذ",
+      "حل",
+      "خدمة",
+    ])
+  ) {
+    return {
+      intent: "solution",
+      visualConcept: "system",
+      preferredArchetypes: [
+        "custom-app-solution",
+        "unified-customer-journey",
+        "digital-transformation",
+      ],
+    };
+  }
+
+  // --------------------------------------------------
+  // 7. COMPETITION
   // --------------------------------------------------
 
   if (
@@ -88,108 +276,7 @@ export function analyzeNarration(
   }
 
   // --------------------------------------------------
-  // 2. RISK / MISSED OPPORTUNITIES
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "اخسر",
-      "خسارة",
-      "ممكن اخسر",
-      "فرص",
-      "العملاء ممكن",
-      "عملاء ممكن",
-      "العملاء اللي",
-      "العملاء",
-    ]) &&
-    containsAny(text, [
-      "اخسر",
-      "خسارة",
-      "ممكن",
-      "فرص",
-    ])
-  ) {
-    return {
-      intent: "risk",
-      visualConcept: "outcome",
-      preferredArchetypes: [
-        "missed-opportunities",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 3. TRANSFORMATION
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "تحويل",
-      "تحويله",
-      "تحويل البزنس",
-      "تجربة رقمية",
-      "رقمية",
-      "التحول الرقمي",
-    ])
-  ) {
-    return {
-      intent: "transformation",
-      visualConcept: "transformation",
-      preferredArchetypes: [
-        "digital-transformation",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 4. CUSTOM APP SOLUTION
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "نبني",
-      "معمولة مخصوص",
-      "معمول مخصوص",
-      "مصممة مخصوص",
-      "خدمة",
-      "حل",
-      "مخصوص",
-    ])
-  ) {
-    return {
-      intent: "solution",
-      visualConcept: "interface",
-      preferredArchetypes: [
-        "custom-app-solution",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 5. UNIFIED CUSTOMER JOURNEY
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "تطبيق واحد",
-      "يشوف منتجات",
-      "يطلب",
-      "يدفع",
-      "يتابع",
-      "إشعارات",
-    ])
-  ) {
-    return {
-      intent: "solution",
-      visualConcept: "system",
-      preferredArchetypes: [
-        "unified-customer-journey",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 6. ANALYTICS / BUSINESS INSIGHTS
+  // 8. ANALYTICS / BUSINESS INSIGHTS
   // --------------------------------------------------
 
   if (
@@ -213,7 +300,7 @@ export function analyzeNarration(
   }
 
   // --------------------------------------------------
-  // 7. CUSTOMER RETENTION
+  // 9. CUSTOMER RETENTION
   // --------------------------------------------------
 
   if (
@@ -238,54 +325,7 @@ export function analyzeNarration(
   }
 
   // --------------------------------------------------
-  // 8. VALUE / APPEARANCE -> UTILITY
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "مش مجرد شكل",
-      "مش مجرد",
-      "مش شكل",
-      "فائدة",
-      "قيمة",
-      "مش بس",
-    ])
-  ) {
-    return {
-      intent: "value",
-      visualConcept: "transformation",
-      preferredArchetypes: [
-        "appearance-to-utility",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 9. FRAGMENTED CUSTOMER JOURNEY
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "يدور",
-      "جوجل",
-      "موقع",
-      "رسالة",
-      "بدل ما",
-      "يدور عليك",
-      "يبعتلك رسالة",
-    ])
-  ) {
-    return {
-      intent: "problem",
-      visualConcept: "problem",
-      preferredArchetypes: [
-        "fragmented-customer-journey",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 10. BEHAVIOR / USAGE STATISTIC
+  // 10. BEHAVIOR / USAGE
   // --------------------------------------------------
 
   if (
@@ -308,57 +348,24 @@ export function analyzeNarration(
   }
 
   // --------------------------------------------------
-  // 11. GENERIC HOOK
+  // 11. VALUE
   // --------------------------------------------------
 
   if (
     containsAny(text, [
-      "تفتكر",
-      "هل",
-      "ليه",
-      "السؤال",
+      "مش مجرد شكل",
+      "مش مجرد",
+      "مش شكل",
+      "فائدة",
+      "قيمة",
+      "مش بس",
     ])
   ) {
     return {
-      intent: "hook",
-      visualConcept: "problem",
+      intent: "value",
+      visualConcept: "transformation",
       preferredArchetypes: [
-        "hero-question",
-      ],
-    };
-  }
-
-  // --------------------------------------------------
-  // 12. CTA
-  //
-  // CTA must be explicit.
-  // Do NOT classify generic words such as:
-  // "إحنا", "عايز", "خلي", "خلينا"
-  // as CTA triggers.
-  // --------------------------------------------------
-
-  if (
-    containsAny(text, [
-      "تواصل معانا",
-      "تواصل معنا",
-      "كلمنا",
-      "كلمينا",
-      "ابدأ معانا",
-      "ابدأ معنا",
-      "احجز",
-      "اطلب الآن",
-      "ابدأ دلوقتي",
-      "ابدأ دلوقتي",
-      "خلي البزنس أقرب",
-      "خلي بزنسك أقرب",
-      "بدغطة واحدة",
-    ])
-  ) {
-    return {
-      intent: "cta",
-      visualConcept: "outcome",
-      preferredArchetypes: [
-        "brand-cta",
+        "appearance-to-utility",
       ],
     };
   }
@@ -375,4 +382,5 @@ export function analyzeNarration(
     ],
   };
 }
+
 

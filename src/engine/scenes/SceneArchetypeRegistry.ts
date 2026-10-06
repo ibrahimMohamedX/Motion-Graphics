@@ -1,4 +1,4 @@
-﻿import type { SceneArchetype } from "../scenes/SceneArchetype";
+﻿import type { SceneArchetype } from "./SceneArchetype.types";
 
 export type SceneArchetypeDefinition = {
   type: SceneArchetype;
@@ -88,3 +88,4 @@ export const SCENE_ARCHETYPE_DEFINITION_MAP = Object.fromEntries(
     definition,
   ]),
 ) as Record<SceneArchetype, SceneArchetypeDefinition>;
+

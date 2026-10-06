@@ -4,10 +4,8 @@
   VisualPlan,
 } from "../visuals/VisualGrammar";
 
-import {
-  SCENE_ARCHETYPE_DEFINITION_MAP,
-  type SceneArchetype,
-} from "../scenes/SceneArchetype";
+import { SCENE_ARCHETYPE_DEFINITION_MAP } from "../scenes/SceneArchetypeRegistry";
+import type { SceneArchetype } from "../scenes/SceneArchetype.types";
 
 import {
   analyzeNarration,
@@ -323,15 +321,15 @@ function selectArchetype(
 
 function getMotionProfile(
   intent: SemanticSceneIntent,
-): {
-  entrance: MotionStrategy;
-  body: MotionStrategy;
-  emphasis: MotionStrategy;
-  exit: MotionStrategy;
-} {
-  return (
-    MOTION_PROFILES[intent] ??
-    MOTION_PROFILES.value
+  archetype: SceneArchetype,
+  variant: string | undefined,
+  sceneIndex: number,
+) {
+  return selectMotionProfile(
+    intent,
+    archetype,
+    variant,
+    sceneIndex,
   );
 }
 
@@ -720,6 +718,91 @@ function createPrimitiveVisualPlan(
   };
 }
 
+function selectMotionProfile(
+  intent: SemanticSceneIntent,
+  archetype: SceneArchetype,
+  variant: string | undefined,
+  sceneIndex: number,
+): {
+  entrance: MotionStrategy;
+  body: MotionStrategy;
+  emphasis: MotionStrategy;
+  exit: MotionStrategy;
+} {
+  const base = MOTION_PROFILES[intent];
+
+  const alternatives: Record<
+    SemanticSceneIntent,
+    Array<{
+      entrance: MotionStrategy;
+      body: MotionStrategy;
+      emphasis: MotionStrategy;
+      exit: MotionStrategy;
+    }>
+  > = {
+    hook: [
+      base,
+      { entrance: "reveal", body: "build", emphasis: "emphasize", exit: "resolve" },
+    ],
+    "behavior-statistic": [
+      base,
+      { entrance: "build", body: "flow", emphasis: "emphasize", exit: "resolve" },
+    ],
+    value: [
+      base,
+      { entrance: "reveal", body: "flow", emphasis: "emphasize", exit: "resolve" },
+      { entrance: "build", body: "transform", emphasis: "emphasize", exit: "resolve" },
+    ],
+    problem: [
+      base,
+      { entrance: "reveal", body: "connect", emphasis: "emphasize", exit: "resolve" },
+      { entrance: "build", body: "flow", emphasis: "emphasize", exit: "resolve" },
+      { entrance: "reveal", body: "compare", emphasis: "emphasize", exit: "resolve" },
+    ],
+    solution: [
+      base,
+      { entrance: "build", body: "connect", emphasis: "emphasize", exit: "resolve" },
+      { entrance: "reveal", body: "flow", emphasis: "transform", exit: "resolve" },
+    ],
+    analytics: [
+      base,
+      { entrance: "reveal", body: "compare", emphasis: "flow", exit: "resolve" },
+    ],
+    retention: [
+      base,
+      { entrance: "build", body: "flow", emphasis: "connect", exit: "resolve" },
+    ],
+    competition: [
+      base,
+      { entrance: "build", body: "compare", emphasis: "flow", exit: "resolve" },
+    ],
+    risk: [
+      base,
+      { entrance: "build", body: "emphasize", emphasis: "compare", exit: "resolve" },
+      { entrance: "reveal", body: "flow", emphasis: "emphasize", exit: "resolve" },
+    ],
+    transformation: [
+      base,
+      { entrance: "build", body: "transform", emphasis: "emphasize", exit: "resolve" },
+      { entrance: "reveal", body: "flow", emphasis: "transform", exit: "resolve" },
+    ],
+    cta: [
+      base,
+      { entrance: "reveal", body: "build", emphasis: "emphasize", exit: "resolve" },
+    ],
+  };
+
+  const options = alternatives[intent];
+
+  const seed = `${intent}|${archetype}|${variant ?? ""}|${sceneIndex}`;
+
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+
+  return options[hash % options.length];
+}
 export const visualForSegment = (
   segment: TranscriptSegment,
   memory: VisualMemory = {
@@ -770,6 +853,9 @@ export const visualForSegment = (
   const motion =
     getMotionProfile(
       semantic.intent,
+      archetype,
+      variant,
+      sceneIndex,
     );
 
   return {
@@ -887,8 +973,11 @@ export const createScenePlan = (
         }
         const motionProfile =
           getMotionProfile(
-            semantic.intent,
-          );
+      semantic.intent,
+      archetype,
+      variant,
+      sceneIndex,
+    );
 
         return {
           id: `scene-${String(
@@ -943,6 +1032,20 @@ export const createScenePlan = (
     scenes,
   };
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
