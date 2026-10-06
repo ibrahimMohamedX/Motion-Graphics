@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { SCENE_LAYOUT } from "../design/SceneLayout";
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 
@@ -89,12 +89,10 @@ export type UnifiedAppJourneyProps = {
 };
 
 export const UnifiedAppJourney: React.FC<UnifiedAppJourneyProps> = ({
-  title = "رحلة العميل",
-  highlight = "في App واحد",
-  steps: stepLabels = ["منتج", "طلب", "دفع", "متابعة", "إشعار"],
+  title = "Ã˜Â±Ã˜Â­Ã™â€žÃ˜Â© Ã˜Â§Ã™â€žÃ˜Â¹Ã™â€¦Ã™Å Ã™â€ž",
+  highlight = "Ã™ÂÃ™Å  App Ã™Ë†Ã˜Â§Ã˜Â­Ã˜Â¯",
+  steps: stepLabels = ["Ã™â€¦Ã™â€ Ã˜ÂªÃ˜Â¬", "Ã˜Â·Ã™â€žÃ˜Â¨", "Ã˜Â¯Ã™ÂÃ˜Â¹", "Ã™â€¦Ã˜ÂªÃ˜Â§Ã˜Â¨Ã˜Â¹Ã˜Â©", "Ã˜Â¥Ã˜Â´Ã˜Â¹Ã˜Â§Ã˜Â±"],
 }) => {
-  // frame intentionally unused
-
   const frame = useCurrentFrame();
   const progress = interpolate(frame, [8, 75], [0, 1], {
     extrapolateLeft: "clamp",
@@ -240,8 +238,8 @@ export type BusinessInsightsDashboardProps = {
 export const BusinessInsightsDashboard: React.FC<
   BusinessInsightsDashboardProps
 > = ({
-  title = "أنت كمان",
-  highlight = "بتفهم عملائك أكتر",
+  title = "Ã˜Â£Ã™â€ Ã˜Âª Ã™Æ’Ã™â€¦Ã˜Â§Ã™â€ ",
+  highlight = "Ã˜Â¨Ã˜ÂªÃ™ÂÃ™â€¡Ã™â€¦ Ã˜Â¹Ã™â€¦Ã™â€žÃ˜Â§Ã˜Â¦Ã™Æ’ Ã˜Â£Ã™Æ’Ã˜ÂªÃ˜Â±",
   customers = "1,284",
   orders = "348",
   revenueStart = 4200,
@@ -249,8 +247,6 @@ export const BusinessInsightsDashboard: React.FC<
   variant = "dashboard",
 }) => {
   void variant;
-  // frame intentionally unused
-
   const frame = useCurrentFrame();
   const revenue = Math.floor(
   interpolate(frame, [0, 70], [revenueStart, revenueEnd], {
@@ -395,10 +391,10 @@ export type CustomerRetentionLoopProps = {
 export const CustomerRetentionLoop: React.FC<
   CustomerRetentionLoopProps
 > = ({
-  title = "مش مجرد",
-  highlight = "بيعة واحدة",
-  centerText = "العميل يرجعلك تاني",
-  items: itemLabels = ["عميل", "شراء", "تفاعل", "ولاء"],
+  title = "Ã™â€¦Ã˜Â´ Ã™â€¦Ã˜Â¬Ã˜Â±Ã˜Â¯",
+  highlight = "Ã˜Â¨Ã™Å Ã˜Â¹Ã˜Â© Ã™Ë†Ã˜Â§Ã˜Â­Ã˜Â¯Ã˜Â©",
+  centerText = "Ã˜Â§Ã™â€žÃ˜Â¹Ã™â€¦Ã™Å Ã™â€ž Ã™Å Ã˜Â±Ã˜Â¬Ã˜Â¹Ã™â€žÃ™Æ’ Ã˜ÂªÃ˜Â§Ã™â€ Ã™Å ",
+  items: itemLabels = ["Ã˜Â¹Ã™â€¦Ã™Å Ã™â€ž", "Ã˜Â´Ã˜Â±Ã˜Â§Ã˜Â¡", "Ã˜ÂªÃ™ÂÃ˜Â§Ã˜Â¹Ã™â€ž", "Ã™Ë†Ã™â€žÃ˜Â§Ã˜Â¡"],
   variant = "circular-loop",
 }) => {
   void variant;
@@ -406,10 +402,10 @@ export const CustomerRetentionLoop: React.FC<
 
 
   const items = [
-    [itemLabels[0] ?? "عميل", <ConnectionIcon size={30} />],
-    [itemLabels[1] ?? "شراء", <CircuitIcon size={30} />],
-    [itemLabels[2] ?? "تفاعل", <DataIcon size={30} />],
-    [itemLabels[3] ?? "ولاء", <SystemIcon size={30} active />],
+    [itemLabels[0] ?? "Ã˜Â¹Ã™â€¦Ã™Å Ã™â€ž", <ConnectionIcon size={30} />],
+    [itemLabels[1] ?? "Ã˜Â´Ã˜Â±Ã˜Â§Ã˜Â¡", <CircuitIcon size={30} />],
+    [itemLabels[2] ?? "Ã˜ÂªÃ™ÂÃ˜Â§Ã˜Â¹Ã™â€ž", <DataIcon size={30} />],
+    [itemLabels[3] ?? "Ã™Ë†Ã™â€žÃ˜Â§Ã˜Â¡", <SystemIcon size={30} active />],
   ];
 
   return (
@@ -550,16 +546,14 @@ export type CompetitionPressureProps = {
 export const CompetitionPressure: React.FC<
   CompetitionPressureProps
 > = ({
-  title = "المنافسة",
-  highlight = "بتزيد كل يوم",
+  title = "Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â§Ã™ÂÃ˜Â³Ã˜Â©",
+  highlight = "Ã˜Â¨Ã˜ÂªÃ˜Â²Ã™Å Ã˜Â¯ Ã™Æ’Ã™â€ž Ã™Å Ã™Ë†Ã™â€¦",
   competitors = ["COMPETITOR 1", "COMPETITOR 2", "COMPETITOR 3"],
   yourLabel = "YOU",
   heights = [180, 260, 350, 470],
   variant = "rising-bars",
 }) => {
   void variant;
-  // frame intentionally unused
-
   const frame = useCurrentFrame();
   const progress = interpolate(frame, [0, 65], [0, 1], {
     extrapolateLeft: "clamp",
@@ -650,17 +644,21 @@ export type MissedOpportunitiesProps = {
 export const MissedOpportunities: React.FC<
   MissedOpportunitiesProps
 > = ({
-  question = "قد إيه ممكن تخسر؟",
+  question = "Ã™â€šÃ˜Â¯ Ã˜Â¥Ã™Å Ã™â€¡ Ã™â€¦Ã™â€¦Ã™Æ’Ã™â€  Ã˜ÂªÃ˜Â®Ã˜Â³Ã˜Â±Ã˜Å¸",
   target = 12,
   label = "{label}",
   variant = "counter",
 }) => {
   void variant;
-  // frame intentionally unused
-
   const frame = useCurrentFrame();
+
+  const numericTarget =
+    typeof target === "number"
+      ? target
+      : Number.parseFloat(String(target).replace(/[^0-9.-]/g, "")) || 0;
+
   const lost = Math.floor(
-  interpolate(frame, [0, 75], [0, target], {
+    interpolate(frame, [0, 75], [0, numericTarget], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     }),
@@ -751,15 +749,13 @@ export type DigitalTransformationProps = {
 export const DigitalTransformation: React.FC<
   DigitalTransformationProps
 > = ({
-  title = "حوّل تجربة",
-  highlight = "عملائك",
-  leftLabel = "تجربة تقليدية",
-  rightLabel = "تجربة رقمية",
+  title = "Ã˜Â­Ã™Ë†Ã™â€˜Ã™â€ž Ã˜ÂªÃ˜Â¬Ã˜Â±Ã˜Â¨Ã˜Â©",
+  highlight = "Ã˜Â¹Ã™â€¦Ã™â€žÃ˜Â§Ã˜Â¦Ã™Æ’",
+  leftLabel = "Ã˜ÂªÃ˜Â¬Ã˜Â±Ã˜Â¨Ã˜Â© Ã˜ÂªÃ™â€šÃ™â€žÃ™Å Ã˜Â¯Ã™Å Ã˜Â©",
+  rightLabel = "Ã˜ÂªÃ˜Â¬Ã˜Â±Ã˜Â¨Ã˜Â© Ã˜Â±Ã™â€šÃ™â€¦Ã™Å Ã˜Â©",
   variant = "before-after",
 }) => {
   void variant;
-  // frame intentionally unused
-
   const frame = useCurrentFrame();
   const progress = interpolate(frame, [8, 70], [0, 1], {
     extrapolateLeft: "clamp",
@@ -1017,14 +1013,12 @@ export const FinalBrandCTA: React.FC<
   FinalBrandCTAProps
 > = ({
   title = "Archai Solutions",
-  cta = "خلي البزنس أقرب لعملائك",
-  subtitle = "حلول رقمية مصممة لنتيجة حقيقية.",
+  cta = "Ã˜Â®Ã™â€žÃ™Å  Ã˜Â§Ã™â€žÃ˜Â¨Ã˜Â²Ã™â€ Ã˜Â³ Ã˜Â£Ã™â€šÃ˜Â±Ã˜Â¨ Ã™â€žÃ˜Â¹Ã™â€¦Ã™â€žÃ˜Â§Ã˜Â¦Ã™Æ’",
+  subtitle = "Ã˜Â­Ã™â€žÃ™Ë†Ã™â€ž Ã˜Â±Ã™â€šÃ™â€¦Ã™Å Ã˜Â© Ã™â€¦Ã˜ÂµÃ™â€¦Ã™â€¦Ã˜Â© Ã™â€žÃ™â€ Ã˜ÂªÃ™Å Ã˜Â¬Ã˜Â© Ã˜Â­Ã™â€šÃ™Å Ã™â€šÃ™Å Ã˜Â©.",
   brand = "AS",
   variant = "centered",
 }) => {
   void variant;
-  // frame intentionally unused
-
   const frame = useCurrentFrame();
   const scale = interpolate(frame, [0, 35], [0.88, 1], {
     extrapolateLeft: "clamp",
